@@ -1,12 +1,21 @@
 import os
+# pyrefly: ignore [missing-import]
 import pandas as pd
+# pyrefly: ignore [missing-import]
 import numpy as np
+# pyrefly: ignore [missing-import]
 import joblib
+# pyrefly: ignore [missing-import]
 from sklearn.model_selection import train_test_split
+# pyrefly: ignore [missing-import]
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
+# pyrefly: ignore [missing-import]
 from sklearn.compose import ColumnTransformer
+# pyrefly: ignore [missing-import]
 from sklearn.pipeline import Pipeline
+# pyrefly: ignore [missing-import]
 from sklearn.ensemble import RandomForestClassifier
+# pyrefly: ignore [missing-import]
 from sklearn.metrics import classification_report, confusion_matrix
 
 def train_model():
