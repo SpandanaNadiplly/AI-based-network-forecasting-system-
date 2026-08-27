@@ -1,0 +1,42 @@
+# Virtual environment
+venv/
+.venv/
+env/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Data files (large — use Git LFS or DVC instead)
+data/raw/*.csv
+data/raw/*.pcap
+data/raw/*.pcapng
+data/processed/*.csv
+data/features/*.csv
+
+# Trained models
+models/*.pkl
+models/*.h5
+models/*.pt
+models/*.joblib
+
+# Logs
+logs/*.log
+logs/*.png
+
+# Environment / secrets
+.env
+*.env
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
