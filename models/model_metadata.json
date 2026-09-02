@@ -1,0 +1,153 @@
+{
+  "model_version": "1.0.0-production",
+  "model_name": "AI-Based Network Forecasting & Threat Classifier",
+  "dataset_samples": 10200,
+  "classes": [
+    "BruteForce",
+    "DoS",
+    "Normal",
+    "PortScan"
+  ],
+  "features": [
+    "duration",
+    "src_bytes",
+    "dst_bytes",
+    "packet_rate",
+    "connections_to_same_host",
+    "unique_dst_ports",
+    "failed_logins",
+    "dst_port",
+    "total_bytes",
+    "byte_ratio",
+    "byte_asymmetry",
+    "bytes_per_sec",
+    "port_dispersion_ratio",
+    "failed_login_ratio",
+    "protocol_type_tcp",
+    "protocol_type_udp"
+  ],
+  "top_features": [
+    {
+      "feature": "total_bytes",
+      "importance": 0.1984
+    },
+    {
+      "feature": "unique_dst_ports",
+      "importance": 0.136
+    },
+    {
+      "feature": "dst_bytes",
+      "importance": 0.1305
+    },
+    {
+      "feature": "port_dispersion_ratio",
+      "importance": 0.1273
+    },
+    {
+      "feature": "dst_port",
+      "importance": 0.1078
+    },
+    {
+      "feature": "src_bytes",
+      "importance": 0.0759
+    },
+    {
+      "feature": "packet_rate",
+      "importance": 0.055
+    },
+    {
+      "feature": "failed_login_ratio",
+      "importance": 0.0466
+    },
+    {
+      "feature": "connections_to_same_host",
+      "importance": 0.0431
+    },
+    {
+      "feature": "failed_logins",
+      "importance": 0.0418
+    },
+    {
+      "feature": "duration",
+      "importance": 0.0253
+    },
+    {
+      "feature": "byte_asymmetry",
+      "importance": 0.0083
+    },
+    {
+      "feature": "byte_ratio",
+      "importance": 0.0026
+    },
+    {
+      "feature": "bytes_per_sec",
+      "importance": 0.0014
+    },
+    {
+      "feature": "protocol_type_udp",
+      "importance": 0.0
+    }
+  ],
+  "cross_validation_metrics": {
+    "cv_folds": 5,
+    "mean_f1_score": 0.9998,
+    "std_f1_score": 0.0002,
+    "classification_report": {
+      "BruteForce": {
+        "precision": 0.9983361064891847,
+        "recall": 1.0,
+        "f1-score": 0.9991673605328892,
+        "support": 1200.0
+      },
+      "DoS": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 1500.0
+      },
+      "Normal": {
+        "precision": 1.0,
+        "recall": 0.9996666666666667,
+        "f1-score": 0.9998333055509252,
+        "support": 6000.0
+      },
+      "PortScan": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 1500.0
+      },
+      "accuracy": 0.9998039215686274,
+      "macro avg": {
+        "precision": 0.9995840266222962,
+        "recall": 0.9999166666666667,
+        "f1-score": 0.9997501665209536,
+        "support": 10200.0
+      },
+      "weighted avg": {
+        "precision": 0.999804247822257,
+        "recall": 0.9998039215686274,
+        "f1-score": 0.9998039868573548,
+        "support": 10200.0
+      }
+    },
+    "labels": [
+      "BruteForce",
+      "DoS",
+      "Normal",
+      "PortScan"
+    ]
+  },
+  "input_schema": {
+    "duration": "float64",
+    "src_bytes": "float64",
+    "dst_bytes": "float64",
+    "packet_rate": "float64",
+    "connections_to_same_host": "int64",
+    "unique_dst_ports": "int64",
+    "failed_logins": "int64",
+    "dst_port": "int64",
+    "protocol_type": "str"
+  },
+  "status": "DEPLOYMENT_READY"
+}

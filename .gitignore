@@ -20,11 +20,9 @@ data/raw/*.pcapng
 data/processed/*.csv
 data/features/*.csv
 
-# Trained models
-models/*.pkl
-models/*.h5
-models/*.pt
-models/*.joblib
+# Trained models (allow deployable artifacts under git size limits)
+!models/model_metadata.json
+!models/production_network_forecaster.pkl
 
 # Logs
 logs/*.log

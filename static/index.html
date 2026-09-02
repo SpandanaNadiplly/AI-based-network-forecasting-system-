@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Network AI Guard | Simple AI Threat Forecaster</title>
+  <meta name="description" content="Simple, intuitive AI-based network attack detection and risk forecasting." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body class="dark-theme">
+  <!-- Ambient background glow -->
+  <div class="glow-orb orb-1"></div>
+  <div class="glow-orb orb-2"></div>
+
+  <div class="container">
+    <!-- Top Simple Header -->
+    <header class="simple-header">
+      <div class="logo">
+        <div class="logo-icon">🛡️</div>
+        <div>
+          <h1>Network AI Guard</h1>
+          <p>AI-Powered Attack Detection & Forecasting</p>
+        </div>
+      </div>
+      <div class="status-pill">
+        <span class="dot-live"></span>
+        <span>AI Model Online (99.98% Accuracy)</span>
+      </div>
+    </header>
+
+    <!-- SECTION 1: 1-CLICK SCENARIO TESTER -->
+    <main class="main-card">
+      <div class="card-intro">
+        <h2>Step 1: Choose a Network Traffic Scenario to Test</h2>
+        <p>Click any scenario below to see how the AI detects and handles it in real time:</p>
+      </div>
+
+      <!-- 4 Simple Scenario Buttons -->
+      <div class="scenario-grid">
+        <button class="scenario-card active" id="btnNormal" onclick="selectScenario('normal')">
+          <div class="s-icon">🌐</div>
+          <div class="s-title">Normal Web Browsing</div>
+          <div class="s-desc">Everyday internet traffic (visiting websites, streaming).</div>
+          <div class="s-badge safe">Safe Traffic</div>
+        </button>
+
+        <button class="scenario-card" id="btnDos" onclick="selectScenario('dos')">
+          <div class="s-icon">⚡</div>
+          <div class="s-title">DoS Traffic Flood</div>
+          <div class="s-desc">Attacker flooding server with huge packet bursts.</div>
+          <div class="s-badge danger">Attack: DoS</div>
+        </button>
+
+        <button class="scenario-card" id="btnPortscan" onclick="selectScenario('portscan')">
+          <div class="s-icon">🕵️</div>
+          <div class="s-title">Port Scan (Recon)</div>
+          <div class="s-desc">Attacker scanning open ports to find weaknesses.</div>
+          <div class="s-badge warning">Attack: PortScan</div>
+        </button>
+
+        <button class="scenario-card" id="btnBruteforce" onclick="selectScenario('bruteforce')">
+          <div class="s-icon">🔑</div>
+          <div class="s-title">Password Brute Force</div>
+          <div class="s-desc">Attacker trying multiple failed logins to crack passwords.</div>
+          <div class="s-badge danger">Attack: BruteForce</div>
+        </button>
+      </div>
+
+      <!-- Action Button -->
+      <div class="analyze-action">
+        <button class="btn-analyze" id="btnAnalyze" onclick="analyzeCurrentScenario()">
+          ⚡ Analyze Traffic with AI
+        </button>
+      </div>
+
+      <!-- Step 2: Instant Results Box -->
+      <div class="result-box" id="resultBox">
+        <div class="result-header">
+          <span class="result-step-tag">AI ANALYSIS RESULT</span>
+          <span class="danger-tag" id="dangerTag">LOW RISK</span>
+        </div>
+
+        <div class="result-hero" id="resultHero">
+          <div class="hero-status-icon" id="heroIcon">✅</div>
+          <div>
+            <div class="hero-status-sub" id="heroSub">Status Assessment</div>
+            <div class="hero-status-title" id="heroTitle">SAFE: Normal Traffic</div>
+          </div>
+          <div class="risk-score-badge" id="riskScoreBadge">
+            <span class="risk-num" id="riskNum">0%</span>
+            <span class="risk-lbl">THREAT LEVEL</span>
+          </div>
+        </div>
+
+        <!-- 2 Simple Explanation Cards -->
+        <div class="explanation-grid">
+          <div class="expl-card">
+            <div class="expl-title">🔍 What is happening?</div>
+            <div class="expl-body" id="explMeaning">
+              Standard web browsing packets. Packet rates and connection behaviors are normal.
+            </div>
+          </div>
+          <div class="expl-card">
+            <div class="expl-title">🛡️ Action Required:</div>
+            <div class="expl-body" id="explAction">
+              No action required. Traffic conforms to normal baseline parameters.
+            </div>
+          </div>
+        </div>
+
+        <!-- Optional Accordion for Technical Details -->
+        <details class="tech-details">
+          <summary>⚙️ View Technical Flow Features & Probabilities</summary>
+          <div class="tech-content" id="techContent">
+            <!-- Populated dynamically -->
+          </div>
+        </details>
+      </div>
+    </main>
+
+    <!-- SECTION 2: SIMPLE LIVE STREAM SIMULATOR -->
+    <section class="main-card live-card">
+      <div class="live-header">
+        <div>
+          <h2>Live Network Traffic Watcher</h2>
+          <p>Simulate real-time packets entering your network and watch the AI filter threats.</p>
+        </div>
+        <button class="btn-live" id="btnToggleLive" onclick="toggleLiveSim()">
+          ▶ Start Live Traffic
+        </button>
+      </div>
+
+      <!-- Quick Live Stats Counter -->
+      <div class="live-counter-bar">
+        <div class="counter-item">
+          <span>Packets Checked:</span>
+          <strong id="liveTotalCount">0</strong>
+        </div>
+        <div class="counter-item">
+          <span>Safe Packets:</span>
+          <strong class="text-safe" id="liveSafeCount">0</strong>
+        </div>
+        <div class="counter-item">
+          <span>Threats Stopped:</span>
+          <strong class="text-danger" id="liveThreatCount">0</strong>
+        </div>
+      </div>
+
+      <!-- Live Stream Feed -->
+      <div class="live-feed" id="liveFeed">
+        <div class="feed-empty">Click <strong>"Start Live Traffic"</strong> to watch the AI inspect real-time network packets...</div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="simple-footer">
+      <span>AI Network Forecasting System • Ready for Deployment</span>
+      <span>Running locally on <strong>http://localhost:8080</strong></span>
+    </footer>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
