@@ -452,3 +452,116 @@ body {
   flex-wrap: wrap;
   gap: 0.5rem;
 }
+
+/* ==========================================================================
+   Forecast Panel — "Next Window Risk Forecast"
+   Sits inside .result-box, below the result-hero. Uses existing variables.
+   ========================================================================== */
+
+.forecast-panel {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.forecast-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.forecast-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-sub);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* Forecast risk level badge — mirrors .danger-tag colour logic */
+.forecast-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+}
+.forecast-badge.low      { background: var(--safe-bg);    color: var(--safe-green);     border: 1px solid rgba(0, 230, 118, 0.3); }
+.forecast-badge.medium   { background: var(--warning-bg); color: var(--warning-orange); border: 1px solid rgba(255, 179, 0, 0.3); }
+.forecast-badge.high,
+.forecast-badge.critical { background: var(--danger-bg);  color: var(--danger-red);     border: 1px solid rgba(255, 51, 102, 0.3); }
+
+.forecast-body {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.forecast-score {
+  font-size: 1.3rem;
+  font-weight: 800;
+  flex-shrink: 0;
+  min-width: 3.5rem;
+}
+.forecast-score.low      { color: var(--safe-green); }
+.forecast-score.medium   { color: var(--warning-orange); }
+.forecast-score.high,
+.forecast-score.critical { color: var(--danger-red); }
+
+.forecast-reason {
+  font-size: 0.78rem;
+  color: var(--text-sub);
+  line-height: 1.4;
+  flex-grow: 1;
+}
+
+/* Thin confidence progress bar */
+.forecast-confidence-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.forecast-confidence-lbl {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.forecast-confidence-bar {
+  flex-grow: 1;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.forecast-confidence-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #00f2fe, #4facfe);
+  border-radius: 4px;
+  width: var(--fill, 0%);
+  transition: width 0.4s ease;
+}
+
+/* Live stream forecast indicator (inside counter bar) */
+.forecast-counter {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  padding-left: 1.5rem;
+  border-left: 1px solid var(--border);
+}
+.forecast-counter span { color: var(--text-sub); margin-right: 0.2rem; }
+.forecast-live-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.15rem 0.45rem;
+  border-radius: 8px;
+}
+.forecast-live-badge.low      { background: var(--safe-bg);    color: var(--safe-green); }
+.forecast-live-badge.medium   { background: var(--warning-bg); color: var(--warning-orange); }
+.forecast-live-badge.high,
+.forecast-live-badge.critical { background: var(--danger-bg);  color: var(--danger-red); }

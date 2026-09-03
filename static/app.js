@@ -164,6 +164,53 @@ Dest Port: ${scenario.flow.dst_port} | Conns to Host: ${scenario.flow.connection
 • PortScan:    ${((data.probabilities.PortScan || 0) * 100).toFixed(1)}%
 • BruteForce:  ${((data.probabilities.BruteForce || 0) * 100).toFixed(1)}%
   `;
+
+  // Render forecast panel (if the API returned forecast data)
+  if (data.forecast) {
+    renderForecast(data.forecast);
+  }
+}
+
+/**
+ * Populate the "Next Window Risk Forecast" panel.
+ * Called after each detection when the API response includes a "forecast" key.
+ *
+ * @param {Object} forecast - The forecast dict from the API:
+ *   { forecast_risk_score, forecast_risk_level, forecast_reason,
+ *     forecast_confidence, windows_observed }
+ */
+function renderForecast(forecast) {
+  const panel       = document.getElementById("forecastPanel");
+  const badge       = document.getElementById("forecastBadge");
+  const scoreEl     = document.getElementById("forecastScore");
+  const reasonEl    = document.getElementById("forecastReason");
+  const confLbl     = document.getElementById("forecastConfLbl");
+  const confFill    = document.getElementById("forecastConfFill");
+
+  if (!panel) return;
+
+  const level = (forecast.forecast_risk_level || "LOW").toLowerCase();
+  const score = forecast.forecast_risk_score || 0;
+  const conf  = forecast.forecast_confidence || 0;
+
+  // Show the panel (hidden initially)
+  panel.style.display = "flex";
+
+  // Risk level badge
+  badge.className = `forecast-badge ${level}`;
+  badge.innerText = forecast.forecast_risk_level || "LOW";
+
+  // Score number
+  scoreEl.className = `forecast-score ${level}`;
+  scoreEl.innerText = `${score.toFixed(0)}%`;
+
+  // Reason sentence
+  reasonEl.innerText = forecast.forecast_reason || "—";
+
+  // Confidence bar + label
+  const confPct = Math.round(conf * 100);
+  confLbl.innerText = `Forecast confidence: ${confPct}% (${forecast.windows_observed || 0} windows observed)`;
+  confFill.style.setProperty("--fill", `${confPct}%`);
 }
 
 // Live Stream Simulator
@@ -204,6 +251,20 @@ async function processLivePacket() {
     document.getElementById("liveTotalCount").innerText = totalChecked;
     document.getElementById("liveSafeCount").innerText = safeChecked;
     document.getElementById("liveThreatCount").innerText = threatsChecked;
+
+    // Update live forecast counter if the API returned forecast data
+    if (result.forecast) {
+      const liveBadge = document.getElementById("liveForecastBadge");
+      const liveScore = document.getElementById("liveForecastScore");
+      const level = (result.forecast.forecast_risk_level || "LOW").toLowerCase();
+      if (liveBadge) {
+        liveBadge.className = `forecast-live-badge ${level}`;
+        liveBadge.innerText = result.forecast.forecast_risk_level || "LOW";
+      }
+      if (liveScore) {
+        liveScore.innerText = `${(result.forecast.forecast_risk_score || 0).toFixed(0)}%`;
+      }
+    }
 
     addFeedRow(flow, result);
   } catch (err) {

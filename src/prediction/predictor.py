@@ -1,6 +1,8 @@
 """
 Deployable Inference Engine
 Provides single-flow and batch prediction APIs, schema validation, and alert enrichment.
+Includes a RiskForecaster that tracks trends across recent windows and predicts the
+risk level of the *next* window, turning per-flow detection into genuine forecasting.
 """
 
 import os
@@ -10,6 +12,7 @@ import pandas as pd
 import numpy as np
 
 from .model import DeployableNetworkForecastingModel
+from .forecast import RiskForecaster
 from ..alert.risk_engine import ThreatRiskEvaluator, ThreatAlert
 
 
@@ -21,6 +24,7 @@ class NetworkForecastingPredictor:
     def __init__(self, model_pipeline: DeployableNetworkForecastingModel):
         self.model = model_pipeline
         self.risk_evaluator = ThreatRiskEvaluator()
+        self.forecaster = RiskForecaster(window_count=8)
         self.classes = self.model.classes_
         self.metadata = getattr(self.model, "metadata_", {})
 
@@ -47,7 +51,8 @@ class NetworkForecastingPredictor:
     def predict_flow(self, flow_data: Dict[str, Any]) -> Dict[str, Any]:
         """
         Runs real-time prediction on a single network traffic flow dictionary.
-        Returns prediction, probability distributions, composite risk score, and alert details.
+        Returns prediction, probability distributions, composite risk score,
+        alert details, and a forecast for the next window based on recent trends.
         """
         df = pd.DataFrame([flow_data])
         preds = self.model.predict(df)
@@ -58,6 +63,11 @@ class NetworkForecastingPredictor:
 
         alert: ThreatAlert = self.risk_evaluator.evaluate(pred_label, prob_dict)
 
+        # Update the forecaster with this window's detection results, then
+        # read back the forecast for the *next* window.
+        self.forecaster.observe(pred_label, prob_dict, alert.risk_score)
+        forecast = self.forecaster.forecast_next_window()
+
         result = {
             "predicted_label": pred_label,
             "is_attack": pred_label != "Normal",
@@ -67,7 +77,9 @@ class NetworkForecastingPredictor:
             "risk_score": alert.risk_score,
             "risk_level": alert.risk_level,
             "alert_triggered": alert.alert_triggered,
-            "recommendation": alert.recommendation
+            "recommendation": alert.recommendation,
+            # Forecast for the next window (new field — does not alter existing fields)
+            "forecast": forecast,
         }
         return result
 

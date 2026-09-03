@@ -95,6 +95,24 @@
           </div>
         </div>
 
+        <!-- Next Window Risk Forecast panel (populated by JS after API response) -->
+        <div class="forecast-panel" id="forecastPanel" style="display:none;">
+          <div class="forecast-header">
+            <span class="forecast-label">🔮 Next Window Risk Forecast</span>
+            <span class="forecast-badge low" id="forecastBadge">LOW</span>
+          </div>
+          <div class="forecast-body">
+            <span class="forecast-score low" id="forecastScore">0%</span>
+            <span class="forecast-reason" id="forecastReason">Waiting for trend data…</span>
+          </div>
+          <div class="forecast-confidence-wrap">
+            <span class="forecast-confidence-lbl" id="forecastConfLbl">Confidence: 0%</span>
+            <div class="forecast-confidence-bar">
+              <div class="forecast-confidence-fill" id="forecastConfFill" style="--fill: 0%;"></div>
+            </div>
+          </div>
+        </div>
+
         <!-- 2 Simple Explanation Cards -->
         <div class="explanation-grid">
           <div class="expl-card">
@@ -146,6 +164,11 @@
         <div class="counter-item">
           <span>Threats Stopped:</span>
           <strong class="text-danger" id="liveThreatCount">0</strong>
+        </div>
+        <div class="forecast-counter">
+          <span>Next Window Forecast:</span>
+          <span class="forecast-live-badge low" id="liveForecastBadge">LOW</span>
+          <strong id="liveForecastScore">0%</strong>
         </div>
       </div>
 

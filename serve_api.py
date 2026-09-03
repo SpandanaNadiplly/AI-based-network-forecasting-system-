@@ -100,7 +100,7 @@ class NetworkForecastingRequestHandler(BaseHTTPRequestHandler):
                 "status": "healthy",
                 "service": "AegisNet AI Network Threat Forecasting Platform",
                 "model_loaded": GLOBAL_PREDICTOR is not None,
-                "version": "2.0.0-production"
+                "version": "2.1.0-production"
             })
         elif self.path == "/metadata" or self.path == "/model-info":
             if GLOBAL_PREDICTOR is None:
@@ -108,6 +108,14 @@ class NetworkForecastingRequestHandler(BaseHTTPRequestHandler):
                 return
             info = GLOBAL_PREDICTOR.get_model_info()
             self._send_json(200, info)
+        elif self.path == "/forecast-state":
+            # Returns the current forecaster's next-window prediction without
+            # requiring a new detection call. Useful for polling from the dashboard.
+            if GLOBAL_PREDICTOR is None:
+                self._send_json(503, {"error": "Model not loaded"})
+                return
+            forecast = GLOBAL_PREDICTOR.forecaster.forecast_next_window()
+            self._send_json(200, forecast)
         elif self.path == "/stream-sample":
             # Returns a realistic random network flow for live telemetry streaming
             test_df = get_test_dataset()
@@ -188,9 +196,9 @@ class NetworkForecastingRequestHandler(BaseHTTPRequestHandler):
 
 def run_server(port: int = 8080, model_path: str = "models/production_network_forecaster.pkl"):
     global GLOBAL_PREDICTOR
-    print(f"📦 Loading production model from: {model_path} ...")
+    print(f"[*] Loading production model from: {model_path} ...")
     GLOBAL_PREDICTOR = NetworkForecastingPredictor.load(model_path)
-    print("✅ Model loaded successfully!")
+    print("[OK] Model loaded successfully!")
 
     # Pre-cache test dataset
     get_test_dataset()
@@ -198,15 +206,16 @@ def run_server(port: int = 8080, model_path: str = "models/production_network_fo
     server_address = ("", port)
     httpd = HTTPServer(server_address, NetworkForecastingRequestHandler)
     print("=" * 70)
-    print(f"🌐 AEGISNET DASHBOARD & API ACTIVE AT: http://localhost:{port}")
-    print(f"   • Open in browser: http://localhost:{port}")
-    print(f"   • API Health:      http://localhost:{port}/health")
-    print(f"   • Model Info:      http://localhost:{port}/metadata")
+    print(f"[*] AEGISNET DASHBOARD & API ACTIVE AT: http://localhost:{port}")
+    print(f"    Open in browser : http://localhost:{port}")
+    print(f"    API Health      : http://localhost:{port}/health")
+    print(f"    Model Info      : http://localhost:{port}/metadata")
+    print(f"    Forecast State  : http://localhost:{port}/forecast-state")
     print("=" * 70)
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:
-        print("\n🛑 Shutting down API server...")
+        print("\n[*] Shutting down API server...")
         httpd.server_close()
 
 
