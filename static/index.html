@@ -3,756 +3,318 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AEGIS·NET AI | Autonomous SOC & Predictive Threat Defense</title>
-  <meta name="description" content="Next-Generation AI-Driven Network Attack Detection, Real-Time Flow Forensics, and Predictive Threat Risk Forecasting Command Center." />
+  <title>AEGIS // 3D Cyber Guardian & AI Network Forecaster</title>
+  <meta name="description" content="Immersive 3D WebGL Holographic Cyber Sentinel powered by a Random Forest Network Threat Classifier and EWMA Risk Forecaster." />
   
-  <!-- Fonts -->
+  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
   
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <!-- Three.js (WebGL 3D Engine) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   
   <!-- Custom Styles -->
   <link rel="stylesheet" href="/static/style.css" />
 </head>
-<body class="soc-dark">
-  <!-- Background Cyber Ambient Mesh & Grid -->
-  <div class="cyber-grid-overlay"></div>
-  <div class="ambient-glow orb-cyan"></div>
-  <div class="ambient-glow orb-purple"></div>
-  <div class="ambient-glow orb-rose"></div>
+<body class="guardian-body">
+  <!-- 3D WebGL Background Canvas Container -->
+  <div id="canvas3dContainer" class="canvas-3d-wrap"></div>
 
-  <!-- Toast Notification Container -->
+  <!-- Toast Container -->
   <div id="toastContainer" class="toast-container"></div>
 
-  <div class="soc-layout">
-    <!-- Top Global Header -->
-    <header class="soc-navbar">
-      <div class="nav-brand">
-        <div class="brand-badge">
-          <div class="shield-pulse">
-            <i class="fa-solid fa-shield-halved"></i>
-          </div>
+  <!-- Main Floating HUD Interface -->
+  <div class="guardian-hud-layout">
+    
+    <!-- TOP FLOATING BAR -->
+    <header class="hud-topbar">
+      <div class="hud-brand">
+        <div class="sentinel-badge-orb">
+          <i class="fa-solid fa-shield-halved"></i>
         </div>
-        <div class="brand-text">
-          <div class="brand-title">
-            <span class="text-cyan">AEGIS</span><span class="text-white">·NET</span>
-            <span class="version-tag">AI v2.1 PRO</span>
+        <div>
+          <div class="brand-title-3d">
+            <span>AEGIS</span><span class="text-cyan">//</span><span class="text-white">SENTINEL</span>
+            <span class="holo-badge">3D CYBER CORE</span>
           </div>
-          <div class="brand-subtitle">Autonomous SOC & Predictive Threat Forecaster</div>
+          <div class="brand-sub-3d">Autonomous AI Threat Forecaster (99.98% Accuracy)</div>
         </div>
       </div>
 
-      <!-- Center Status Telemetry -->
-      <div class="nav-telemetry">
-        <div class="telemetry-pill">
-          <span class="pulse-beacon green"></span>
-          <span class="pill-label">MODEL STATUS:</span>
-          <span class="pill-value green" id="navModelStatus">ONLINE (99.98% ACC)</span>
+      <!-- Center Status Pill -->
+      <div class="hud-center-telemetry">
+        <div class="status-capsule" id="statusCapsule">
+          <span class="pulse-beacon green" id="beaconDot"></span>
+          <span class="capsule-state" id="capsuleState">SENTINEL ONLINE • ALL SECTORS SECURE</span>
         </div>
-        <div class="telemetry-pill">
-          <i class="fa-solid fa-bolt-lightning text-cyan"></i>
-          <span class="pill-label">INFERENCE:</span>
-          <span class="pill-value text-cyan" id="navLatency">~1.2 ms</span>
-        </div>
-        <div class="telemetry-pill">
-          <i class="fa-solid fa-radar text-amber"></i>
-          <span class="pill-label">GLOBAL DEFCON:</span>
-          <span class="pill-value badge-defcon" id="navDefcon">DEFCON 4 • NORMAL</span>
+        <div class="latency-capsule">
+          <i class="fa-solid fa-bolt text-cyan"></i>
+          <span id="topLatency">~1.1 ms</span>
         </div>
       </div>
 
-      <!-- Right Navigation Actions -->
-      <div class="nav-actions">
-        <div class="soc-clock" id="socClock">00:00:00 UTC</div>
-        <button class="btn-icon" id="btnAudioToggle" title="Toggle Sound Alerts" onclick="toggleAudioAlerts()">
+      <!-- Right Action Controls -->
+      <div class="hud-top-actions">
+        <button class="btn-hud-icon" id="btnAudioToggle" onclick="toggleAudio()" title="Toggle High-Tech Audio FX">
           <i class="fa-solid fa-volume-high" id="audioIcon"></i>
         </button>
-        <button class="btn-action-primary" onclick="triggerQuickMitigationExport()">
-          <i class="fa-solid fa-file-shield"></i> Export Incident Report
+        <button class="btn-hud-icon" id="btnSpeechToggle" onclick="toggleSpeech()" title="Toggle Guardian Voice Synthesis">
+          <i class="fa-solid fa-comment-dots" id="speechIcon"></i>
+        </button>
+        <button class="btn-hud-action" onclick="exportIncidentLog()">
+          <i class="fa-solid fa-file-shield"></i> Export Threat Log
         </button>
       </div>
     </header>
 
-    <!-- Top KPI Performance Ribbon -->
-    <section class="kpi-ribbon">
-      <div class="kpi-card">
-        <div class="kpi-header">
-          <span class="kpi-title">TOTAL FLOWS ANALYZED</span>
-          <i class="fa-solid fa-wave-square kpi-icon text-cyan"></i>
-        </div>
-        <div class="kpi-body">
-          <span class="kpi-val" id="kpiTotalFlows">0</span>
-          <span class="kpi-trend positive"><i class="fa-solid fa-arrow-trend-up"></i> Live Telemetry</span>
-        </div>
-        <div class="kpi-footer">Processed across all active ingress ports</div>
+    <!-- CENTER FLOATING GUARDIAN DIALOGUE BANNER -->
+    <div class="sentinel-dialogue-banner" id="sentinelBanner">
+      <div class="dialogue-avatar-mini" id="dialogueMiniOrb">
+        <i class="fa-solid fa-brain"></i>
       </div>
-
-      <div class="kpi-card">
-        <div class="kpi-header">
-          <span class="kpi-title">SAFE / NORMAL FLOWS</span>
-          <i class="fa-solid fa-circle-check kpi-icon text-emerald"></i>
+      <div class="dialogue-content">
+        <div class="dialogue-sender">
+          <span>GUARDIAN VOICE SYNTHESIZER</span>
+          <span class="holo-tag" id="dialogueStateTag">STANDBY MONITORING</span>
         </div>
-        <div class="kpi-body">
-          <span class="kpi-val text-emerald" id="kpiSafeFlows">0</span>
-          <span class="kpi-badge emerald" id="kpiSafeRate">100%</span>
-        </div>
-        <div class="kpi-footer">Baseline authenticated network traffic</div>
-      </div>
-
-      <div class="kpi-card">
-        <div class="kpi-header">
-          <span class="kpi-title">THREATS INTERCEPTED</span>
-          <i class="fa-solid fa-triangle-exclamation kpi-icon text-rose"></i>
-        </div>
-        <div class="kpi-body">
-          <span class="kpi-val text-rose" id="kpiThreatsCount">0</span>
-          <span class="kpi-badge rose" id="kpiThreatRate">0.0%</span>
-        </div>
-        <div class="kpi-footer">DoS, PortScan & BruteForce mitigations</div>
-      </div>
-
-      <div class="kpi-card highlight-forecast">
-        <div class="kpi-header">
-          <span class="kpi-title">NEXT-WINDOW FORECAST</span>
-          <i class="fa-solid fa-chart-line kpi-icon text-cyan"></i>
-        </div>
-        <div class="kpi-body">
-          <span class="kpi-val text-cyan" id="kpiForecastScore">0%</span>
-          <span class="kpi-badge forecast-badge-pill low" id="kpiForecastPill">LOW RISK</span>
-        </div>
-        <div class="kpi-footer" id="kpiForecastReason">AI observing initial baseline telemetry...</div>
-      </div>
-    </section>
-
-    <!-- Navigation Tabs Bar -->
-    <nav class="soc-tabs">
-      <button class="tab-btn active" onclick="switchTab('live-radar')">
-        <i class="fa-solid fa-tower-broadcast"></i> Live SOC Radar & Stream
-      </button>
-      <button class="tab-btn" onclick="switchTab('threat-simulator')">
-        <i class="fa-solid fa-flask-vial"></i> Attack Simulator & Lab
-      </button>
-      <button class="tab-btn" onclick="switchTab('predictive-forecast')">
-        <i class="fa-solid fa-chart-area"></i> Predictive Horizon
-      </button>
-      <button class="tab-btn" onclick="switchTab('batch-forensics')">
-        <i class="fa-solid fa-database"></i> Batch Forensics & CSV
-      </button>
-      <button class="tab-btn" onclick="switchTab('model-intel')">
-        <i class="fa-solid fa-brain"></i> AI Pipeline & Metadata
-      </button>
-    </nav>
-
-    <!-- TAB 1: LIVE SOC RADAR & STREAM -->
-    <main id="tab-live-radar" class="tab-content active">
-      <!-- Radar Charts Row -->
-      <div class="grid-2-col">
-        <!-- Live Traffic Throughput Chart -->
-        <div class="panel-card">
-          <div class="panel-header">
-            <div class="panel-title">
-              <i class="fa-solid fa-chart-simple text-cyan"></i> Real-Time Telemetry Flow Volume
-            </div>
-            <div class="panel-controls">
-              <span class="live-indicator"><span class="pulse-beacon green"></span> LIVE STREAM</span>
-            </div>
-          </div>
-          <div class="chart-container-lg">
-            <canvas id="liveThroughputChart"></canvas>
-          </div>
-        </div>
-
-        <!-- Attack Distribution & Risk Horizon Doughnut -->
-        <div class="panel-card">
-          <div class="panel-header">
-            <div class="panel-title">
-              <i class="fa-solid fa-pie-chart text-purple"></i> Threat Class Distribution Radar
-            </div>
-            <div class="panel-controls">
-              <span class="badge-subtle" id="activeVectorsCount">4 Classes Active</span>
-            </div>
-          </div>
-          <div class="chart-container-doughnut">
-            <div class="doughnut-canvas-wrap">
-              <canvas id="attackDistChart"></canvas>
-            </div>
-            <div class="threat-legend" id="threatLegend">
-              <div class="legend-item"><span class="legend-dot normal"></span> Normal (<span id="legNormal">0</span>)</div>
-              <div class="legend-item"><span class="legend-dot dos"></span> DoS Flood (<span id="legDos">0</span>)</div>
-              <div class="legend-item"><span class="legend-dot portscan"></span> PortScan (<span id="legPortscan">0</span>)</div>
-              <div class="legend-item"><span class="legend-dot bruteforce"></span> BruteForce (<span id="legBruteforce">0</span>)</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Live Flow Stream Table Panel -->
-      <div class="panel-card stream-panel">
-        <div class="panel-header">
-          <div class="panel-title">
-            <i class="fa-solid fa-network-wired text-cyan"></i> Ingress Packet Stream & Deep Telemetry
-          </div>
-          <div class="stream-toolbar">
-            <div class="search-wrap">
-              <i class="fa-solid fa-magnifying-glass"></i>
-              <input type="text" id="streamSearch" placeholder="Filter by port, protocol, label..." oninput="filterStreamTable()" />
-            </div>
-            <select id="streamFilter" class="soc-select" onchange="filterStreamTable()">
-              <option value="ALL">All Traffic Types</option>
-              <option value="THREATS_ONLY">Threats Only (Blocked)</option>
-              <option value="SAFE_ONLY">Normal Only (Allowed)</option>
-              <option value="DoS">DoS Attacks Only</option>
-              <option value="PortScan">Port Scans Only</option>
-              <option value="BruteForce">Brute Force Only</option>
-            </select>
-            <div class="stream-speed-wrap">
-              <label>Speed:</label>
-              <select id="streamSpeed" class="soc-select" onchange="changeStreamSpeed()">
-                <option value="1200">1.2s (Normal)</option>
-                <option value="600">0.6s (Fast)</option>
-                <option value="2000">2.0s (Slow)</option>
-              </select>
-            </div>
-            <button class="btn-stream-toggle" id="btnToggleLiveStream" onclick="toggleLiveSim()">
-              <i class="fa-solid fa-play" id="btnLiveIcon"></i> <span id="btnLiveText">Start Live Traffic</span>
-            </button>
-            <button class="btn-inject" onclick="injectRandomAttack()" title="Simulate Immediate Attack Burst">
-              <i class="fa-solid fa-radiation"></i> Inject Attack
-            </button>
-          </div>
-        </div>
-
-        <div class="table-container">
-          <table class="soc-table" id="liveStreamTable">
-            <thead>
-              <tr>
-                <th>TIMESTAMP</th>
-                <th>SRC / PROTOCOL</th>
-                <th>DEST PORT</th>
-                <th>DURATION</th>
-                <th>PACKET RATE</th>
-                <th>BYTE RATIO</th>
-                <th>CLASSIFICATION</th>
-                <th>RISK SCORE</th>
-                <th>STATUS</th>
-                <th>ACTIONS</th>
-              </tr>
-            </thead>
-            <tbody id="streamTableBody">
-              <tr class="empty-row" id="streamEmptyRow">
-                <td colspan="10">
-                  <div class="empty-state">
-                    <i class="fa-solid fa-satellite-dish"></i>
-                    <p>Live stream is paused. Click <strong>"Start Live Traffic"</strong> or <strong>"Inject Attack"</strong> to monitor live ingress flows.</p>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </main>
-
-    <!-- TAB 2: ATTACK SIMULATOR & TUNING LAB -->
-    <main id="tab-threat-simulator" class="tab-content">
-      <div class="grid-sim-layout">
-        <!-- Left: Scenario Presets & Interactive Tuning Sliders -->
-        <div class="panel-card sim-controls-card">
-          <div class="panel-header">
-            <div class="panel-title">
-              <i class="fa-solid fa-sliders text-cyan"></i> Threat Scenario Presets & Flow Tuner
-            </div>
-            <button class="btn-subtle" onclick="resetSimulatorDefaults()">
-              <i class="fa-solid fa-rotate-left"></i> Reset Baseline
-            </button>
-          </div>
-
-          <!-- 4 Preset Buttons -->
-          <div class="preset-grid">
-            <button class="preset-btn active" id="presetBtn-normal" onclick="selectPreset('normal')">
-              <div class="preset-icon safe"><i class="fa-solid fa-globe"></i></div>
-              <div class="preset-info">
-                <div class="preset-name">Normal Web Flow</div>
-                <div class="preset-meta">Standard HTTPS / Web API</div>
-              </div>
-              <span class="preset-tag safe">SAFE</span>
-            </button>
-
-            <button class="preset-btn" id="presetBtn-dos" onclick="selectPreset('dos')">
-              <div class="preset-icon danger"><i class="fa-solid fa-bolt-lightning"></i></div>
-              <div class="preset-info">
-                <div class="preset-name">DoS Traffic Flood</div>
-                <div class="preset-meta">High Packet Rate / SYN Blast</div>
-              </div>
-              <span class="preset-tag danger">ATTACK</span>
-            </button>
-
-            <button class="preset-btn" id="presetBtn-portscan" onclick="selectPreset('portscan')">
-              <div class="preset-icon warning"><i class="fa-solid fa-magnifying-glass-chart"></i></div>
-              <div class="preset-info">
-                <div class="preset-name">Port Scan (Recon)</div>
-                <div class="preset-meta">Multi-Port Probe Scan</div>
-              </div>
-              <span class="preset-tag warning">ATTACK</span>
-            </button>
-
-            <button class="preset-btn" id="presetBtn-bruteforce" onclick="selectPreset('bruteforce')">
-              <div class="preset-icon purple"><i class="fa-solid fa-key"></i></div>
-              <div class="preset-info">
-                <div class="preset-name">SSH / Auth Brute Force</div>
-                <div class="preset-meta">Repeated Login Failures</div>
-              </div>
-              <span class="preset-tag purple">ATTACK</span>
-            </button>
-          </div>
-
-          <!-- Flow Parameter Sliders -->
-          <div class="slider-section-header">
-            <span>Fine-Tune Flow Telemetry Parameters:</span>
-            <span class="live-calc-badge"><i class="fa-solid fa-microchip"></i> Real-time AI Re-calc</span>
-          </div>
-
-          <div class="sliders-grid">
-            <div class="slider-group">
-              <div class="slider-label-row">
-                <label>Packet Rate (pkts/sec)</label>
-                <span class="slider-val" id="valPacketRate">14.5</span>
-              </div>
-              <input type="range" id="slidePacketRate" min="0.5" max="1000" step="0.5" value="14.5" oninput="onSliderChange()" />
-            </div>
-
-            <div class="slider-group">
-              <div class="slider-label-row">
-                <label>Connections to Same Host</label>
-                <span class="slider-val" id="valConns">3</span>
-              </div>
-              <input type="range" id="slideConns" min="1" max="500" step="1" value="3" oninput="onSliderChange()" />
-            </div>
-
-            <div class="slider-group">
-              <div class="slider-label-row">
-                <label>Unique Destination Ports</label>
-                <span class="slider-val" id="valPorts">2</span>
-              </div>
-              <input type="range" id="slidePorts" min="1" max="60" step="1" value="2" oninput="onSliderChange()" />
-            </div>
-
-            <div class="slider-group">
-              <div class="slider-label-row">
-                <label>Failed Login Attempts</label>
-                <span class="slider-val" id="valFailedLogins">0</span>
-              </div>
-              <input type="range" id="slideFailedLogins" min="0" max="25" step="1" value="0" oninput="onSliderChange()" />
-            </div>
-
-            <div class="slider-group">
-              <div class="slider-label-row">
-                <label>Outbound Source Bytes (B)</label>
-                <span class="slider-val" id="valSrcBytes">1820</span>
-              </div>
-              <input type="range" id="slideSrcBytes" min="10" max="8000" step="10" value="1820" oninput="onSliderChange()" />
-            </div>
-
-            <div class="slider-group">
-              <div class="slider-label-row">
-                <label>Inbound Dest Bytes (B)</label>
-                <span class="slider-val" id="valDstBytes">1250</span>
-              </div>
-              <input type="range" id="slideDstBytes" min="10" max="8000" step="10" value="1250" oninput="onSliderChange()" />
-            </div>
-
-            <div class="slider-group">
-              <div class="slider-label-row">
-                <label>Flow Duration (sec)</label>
-                <span class="slider-val" id="valDuration">35.2</span>
-              </div>
-              <input type="range" id="slideDuration" min="0.1" max="120" step="0.1" value="35.2" oninput="onSliderChange()" />
-            </div>
-
-            <div class="slider-group">
-              <div class="slider-label-row">
-                <label>Destination Port</label>
-                <span class="slider-val" id="valDstPort">443 (HTTPS)</span>
-              </div>
-              <select id="selectDstPort" class="soc-select-full" onchange="onSliderChange()">
-                <option value="443">Port 443 (HTTPS)</option>
-                <option value="80">Port 80 (HTTP / Web Server)</option>
-                <option value="22">Port 22 (SSH Remote Shell)</option>
-                <option value="21">Port 21 (FTP File Transfer)</option>
-                <option value="1433">Port 1433 (MS-SQL Database)</option>
-                <option value="3306">Port 3306 (MySQL Database)</option>
-                <option value="8080">Port 8080 (App Proxy)</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <!-- Right: AI Forensic Assessment & Explainability Card -->
-        <div class="panel-card sim-results-card">
-          <div class="panel-header">
-            <div class="panel-title">
-              <i class="fa-solid fa-microchip text-emerald"></i> AI Forensic Classification & Risk Engine
-            </div>
-            <span class="risk-badge-status" id="simRiskBadge">LOW RISK</span>
-          </div>
-
-          <!-- Hero Verdict Box -->
-          <div class="verdict-banner" id="simVerdictBanner">
-            <div class="verdict-icon-wrap" id="simVerdictIcon">
-              <i class="fa-solid fa-shield-check"></i>
-            </div>
-            <div class="verdict-details">
-              <div class="verdict-sub" id="simVerdictSub">BEHAVIORAL ASSESSMENT</div>
-              <div class="verdict-title" id="simVerdictTitle">NORMAL NETWORK TRAFFIC</div>
-              <div class="verdict-desc" id="simVerdictDesc">
-                Flow metrics align with established baseline traffic behavior. Zero anomalies detected.
-              </div>
-            </div>
-            <div class="verdict-score-box">
-              <div class="score-circle" id="simScoreCircle">
-                <span class="score-number" id="simRiskScore">0%</span>
-                <span class="score-lbl">RISK SCORE</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Multi-Class Probability Bars -->
-          <div class="prob-section">
-            <div class="section-title">
-              <span>Model Probability Distribution</span>
-              <span class="confidence-tag" id="simConfidenceTag">Confidence: 99.8%</span>
-            </div>
-            <div class="prob-bars-grid">
-              <div class="prob-item">
-                <div class="prob-labels">
-                  <span><i class="fa-solid fa-check text-emerald"></i> Normal Traffic</span>
-                  <strong id="probNormalVal">99.8%</strong>
-                </div>
-                <div class="prob-bar-track">
-                  <div class="prob-bar-fill fill-normal" id="probNormalBar" style="width: 99.8%"></div>
-                </div>
-              </div>
-
-              <div class="prob-item">
-                <div class="prob-labels">
-                  <span><i class="fa-solid fa-bolt text-rose"></i> DoS Attack</span>
-                  <strong id="probDosVal">0.1%</strong>
-                </div>
-                <div class="prob-bar-track">
-                  <div class="prob-bar-fill fill-dos" id="probDosBar" style="width: 0.1%"></div>
-                </div>
-              </div>
-
-              <div class="prob-item">
-                <div class="prob-labels">
-                  <span><i class="fa-solid fa-radar text-amber"></i> PortScan Recon</span>
-                  <strong id="probPortscanVal">0.1%</strong>
-                </div>
-                <div class="prob-bar-track">
-                  <div class="prob-bar-fill fill-portscan" id="probPortscanBar" style="width: 0.1%"></div>
-                </div>
-              </div>
-
-              <div class="prob-item">
-                <div class="prob-labels">
-                  <span><i class="fa-solid fa-key text-purple"></i> BruteForce Auth</span>
-                  <strong id="probBruteforceVal">0.0%</strong>
-                </div>
-                <div class="prob-bar-track">
-                  <div class="prob-bar-fill fill-bruteforce" id="probBruteforceBar" style="width: 0.0%"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Automated Playbook & Mitigation Actions -->
-          <div class="playbook-section">
-            <div class="section-title">
-              <span><i class="fa-solid fa-book-skull text-cyan"></i> Recommended SOC Defense Playbook</span>
-            </div>
-            <div class="playbook-card" id="simPlaybookCard">
-              <div class="playbook-action-text" id="simPlaybookText">
-                Traffic conforms to standard parameters. Keep standard monitoring active.
-              </div>
-              <div class="playbook-actions">
-                <button class="btn-playbook" id="btnMitigateIP" onclick="applyPlaybookMitigation('block_ip')">
-                  <i class="fa-solid fa-ban"></i> Deploy IP Block
-                </button>
-                <button class="btn-playbook" id="btnMitigateRate" onclick="applyPlaybookMitigation('rate_limit')">
-                  <i class="fa-solid fa-gauge-high"></i> Enable Rate-Limiting
-                </button>
-                <button class="btn-playbook" id="btnMitigatePort" onclick="applyPlaybookMitigation('close_port')">
-                  <i class="fa-solid fa-lock"></i> Isolate Port
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </main>
-
-    <!-- TAB 3: PREDICTIVE RISK HORIZON -->
-    <main id="tab-predictive-forecast" class="tab-content">
-      <div class="grid-2-col">
-        <!-- Forecast Time-Series Horizon Chart -->
-        <div class="panel-card">
-          <div class="panel-header">
-            <div class="panel-title">
-              <i class="fa-solid fa-chart-line text-cyan"></i> Predictive Threat Horizon (EWMA & Trend Projection)
-            </div>
-            <span class="badge-subtle">10-Window Lookahead</span>
-          </div>
-          <div class="chart-container-lg">
-            <canvas id="forecastHorizonChart"></canvas>
-          </div>
-        </div>
-
-        <!-- Predictive Engine Analytics & Anomaly Momentum -->
-        <div class="panel-card">
-          <div class="panel-header">
-            <div class="panel-title">
-              <i class="fa-solid fa-satellite text-emerald"></i> Threat Velocity & Attack Window Momentum
-            </div>
-          </div>
-          <div class="forecast-intel-box">
-            <div class="forecast-gauge-row">
-              <div class="forecast-metric-card">
-                <div class="metric-title">FORECASTED RISK (T+1)</div>
-                <div class="metric-value-lg text-cyan" id="fcScoreVal">0%</div>
-                <div class="metric-badge" id="fcLevelBadge">LOW THREAT</div>
-              </div>
-              <div class="forecast-metric-card">
-                <div class="metric-title">PREDICTION CONFIDENCE</div>
-                <div class="metric-value-lg text-emerald" id="fcConfidenceVal">85%</div>
-                <div class="metric-badge">HIGH STATISTICAL FIT</div>
-              </div>
-              <div class="forecast-metric-card">
-                <div class="metric-title">TRAFFIC ANOMALY TREND</div>
-                <div class="metric-value-lg text-safe" id="fcTrendVal">STABLE 0.0/m</div>
-                <div class="metric-badge">MOMENTUM INDEX</div>
-              </div>
-            </div>
-
-            <div class="forecast-explanation-box">
-              <div class="expl-header"><i class="fa-solid fa-wand-magic-sparkles text-cyan"></i> AI Forecast Rationale:</div>
-              <p id="fcRationaleText">
-                Analyzing historical flow sequence. Anomaly scores remain within baseline variance. No attack escalation predicted for the upcoming monitoring window.
-              </p>
-            </div>
-
-            <div class="early-warning-alert" id="fcEarlyWarning">
-              <i class="fa-solid fa-circle-check text-emerald"></i>
-              <div>
-                <strong>Predictive Horizon Clean:</strong>
-                <span>All predictive indicators project stable network throughput without impending volumetric spikes or reconnaissance surges.</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </main>
-
-    <!-- TAB 4: BATCH FORENSICS & CSV DATASET EVALUATOR -->
-    <main id="tab-batch-forensics" class="tab-content">
-      <div class="panel-card">
-        <div class="panel-header">
-          <div class="panel-title">
-            <i class="fa-solid fa-layer-group text-cyan"></i> Enterprise Batch Forensic Analysis & Verification
-          </div>
-          <div class="batch-actions">
-            <button class="btn-action-secondary" onclick="loadSampleTestBatch()">
-              <i class="fa-solid fa-cloud-arrow-down"></i> Load 2,040 Test Set Flows
-            </button>
-            <label class="btn-action-primary upload-btn-label">
-              <i class="fa-solid fa-file-csv"></i> Upload Custom Flow CSV
-              <input type="file" id="batchCsvInput" accept=".csv" onchange="handleCsvUpload(event)" style="display:none;" />
-            </label>
-          </div>
-        </div>
-
-        <!-- Batch Summary Banner -->
-        <div class="batch-metrics-row" id="batchMetricsRow" style="display: none;">
-          <div class="batch-stat-card">
-            <span>Evaluated Flows:</span>
-            <strong id="batchTotalCount">0</strong>
-          </div>
-          <div class="batch-stat-card">
-            <span>Attack Invasions Detected:</span>
-            <strong class="text-rose" id="batchThreatCount">0</strong>
-          </div>
-          <div class="batch-stat-card">
-            <span>DoS Floods:</span>
-            <strong class="text-rose" id="batchDosCount">0</strong>
-          </div>
-          <div class="batch-stat-card">
-            <span>Port Scans:</span>
-            <strong class="text-amber" id="batchPortscanCount">0</strong>
-          </div>
-          <div class="batch-stat-card">
-            <span>Brute Force Attacks:</span>
-            <strong class="text-purple" id="batchBruteforceCount">0</strong>
-          </div>
-          <div class="batch-stat-card">
-            <span>Avg Risk Severity:</span>
-            <strong id="batchAvgRisk">0%</strong>
-          </div>
-        </div>
-
-        <div class="table-container-batch">
-          <table class="soc-table" id="batchTable">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>DURATION</th>
-                <th>SRC BYTES</th>
-                <th>DST BYTES</th>
-                <th>PACKET RATE</th>
-                <th>CONNS TO HOST</th>
-                <th>DST PORTS</th>
-                <th>FAILED LOGINS</th>
-                <th>AI VERDICT</th>
-                <th>CONFIDENCE</th>
-                <th>RISK LEVEL</th>
-              </tr>
-            </thead>
-            <tbody id="batchTableBody">
-              <tr class="empty-row">
-                <td colspan="11">
-                  <div class="empty-state">
-                    <i class="fa-solid fa-file-lines"></i>
-                    <p>Click <strong>"Load 2,040 Test Set Flows"</strong> or upload a CSV file to execute high-throughput batch AI forensics.</p>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </main>
-
-    <!-- TAB 5: AI PIPELINE & MODEL METADATA -->
-    <main id="tab-model-intel" class="tab-content">
-      <div class="grid-2-col">
-        <!-- Feature Importance Chart -->
-        <div class="panel-card">
-          <div class="panel-header">
-            <div class="panel-title">
-              <i class="fa-solid fa-chart-column text-cyan"></i> Neural & Feature Importance Matrix (Gini Importance)
-            </div>
-          </div>
-          <div class="chart-container-lg">
-            <canvas id="featureImportanceChart"></canvas>
-          </div>
-        </div>
-
-        <!-- Model Specs & Hyperparameters -->
-        <div class="panel-card">
-          <div class="panel-header">
-            <div class="panel-title">
-              <i class="fa-solid fa-circle-nodes text-purple"></i> Production Model Architecture & Hyperparameters
-            </div>
-            <span class="badge-subtle">Production v2.1</span>
-          </div>
-
-          <div class="model-spec-grid">
-            <div class="spec-card">
-              <span class="spec-label">Ensemble Classifier</span>
-              <span class="spec-val text-cyan">Random Forest Forecaster</span>
-            </div>
-            <div class="spec-card">
-              <span class="spec-label">Total Estimators (Trees)</span>
-              <span class="spec-val">100 Trees</span>
-            </div>
-            <div class="spec-card">
-              <span class="spec-label">Engineered Features</span>
-              <span class="spec-val">16 Input Features</span>
-            </div>
-            <div class="spec-card">
-              <span class="spec-label">Training Samples</span>
-              <span class="spec-val">10,200 Balanced Records</span>
-            </div>
-            <div class="spec-card">
-              <span class="spec-label">Testing Precision & Recall</span>
-              <span class="spec-val text-emerald">99.98% / 100.0%</span>
-            </div>
-            <div class="spec-card">
-              <span class="spec-label">ROC-AUC Score</span>
-              <span class="spec-val text-emerald">1.000 (Perfect ROC)</span>
-            </div>
-            <div class="spec-card">
-              <span class="spec-label">Inference Latency</span>
-              <span class="spec-val text-cyan">&lt; 1.5ms per flow</span>
-            </div>
-            <div class="spec-card">
-              <span class="spec-label">Forecasting Algorithm</span>
-              <span class="spec-val">EWMA Anomaly Forecaster</span>
-            </div>
-          </div>
-
-          <!-- Feature Matrix Pill Badges -->
-          <div class="engineered-features-wrap">
-            <div class="section-title"><span>Engineered Telemetry Features:</span></div>
-            <div class="features-pills-list" id="featuresPillsList">
-              <span class="feat-pill">duration</span>
-              <span class="feat-pill">src_bytes</span>
-              <span class="feat-pill">dst_bytes</span>
-              <span class="feat-pill">packet_rate</span>
-              <span class="feat-pill">total_bytes</span>
-              <span class="feat-pill">byte_ratio</span>
-              <span class="feat-pill">byte_asymmetry</span>
-              <span class="feat-pill">bytes_per_sec</span>
-              <span class="feat-pill">port_dispersion_ratio</span>
-              <span class="feat-pill">failed_login_ratio</span>
-              <span class="feat-pill">connections_to_same_host</span>
-              <span class="feat-pill">unique_dst_ports</span>
-              <span class="feat-pill">failed_logins</span>
-              <span class="feat-pill">dst_port</span>
-              <span class="feat-pill">protocol_type_tcp</span>
-              <span class="feat-pill">protocol_type_udp</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </main>
-
-    <!-- Deep Packet Inspector Modal -->
-    <div class="modal-backdrop" id="packetModal" onclick="closePacketModal(event)">
-      <div class="modal-dialog" onclick="event.stopPropagation()">
-        <div class="modal-header">
-          <div class="modal-title">
-            <i class="fa-solid fa-fingerprint text-cyan"></i> Deep Telemetry Packet Inspector
-          </div>
-          <button class="modal-close-btn" onclick="closePacketModal()">&times;</button>
-        </div>
-        <div class="modal-body" id="modalPacketBody">
-          <!-- Populated dynamically by JS -->
-        </div>
-        <div class="modal-footer">
-          <button class="btn-action-secondary" onclick="closePacketModal()">Close Inspector</button>
-          <button class="btn-action-primary" onclick="copyModalJson()">
-            <i class="fa-solid fa-copy"></i> Copy Raw Telemetry JSON
-          </button>
+        <div class="dialogue-text" id="guardianText">
+          "Welcome Commander. I am your 3D Cyber Guardian. Drag your cursor across the screen to interact with my energy core, or trigger a threat simulation from the dock below."
         </div>
       </div>
     </div>
 
-    <!-- Global Footer -->
-    <footer class="soc-footer">
-      <div class="footer-left">
-        <span class="pulse-beacon green"></span>
-        <span>AegisNet AI Cyber Defense • Autonomous Network Threat Forecasting Platform</span>
+    <!-- MAIN TWO-COLUMN FLOATING GLASS HUD WIDGETS -->
+    <main class="hud-cards-row">
+      
+      <!-- LEFT HUD: AI Forensic Threat Matrix -->
+      <aside class="floating-glass-card left-card" id="leftCard">
+        <div class="glass-card-header">
+          <div class="card-title">
+            <i class="fa-solid fa-crosshairs text-cyan"></i> Threat Forensic Matrix
+          </div>
+          <span class="risk-pill low" id="cardRiskPill">LOW RISK</span>
+        </div>
+
+        <!-- Hero Verdict Box -->
+        <div class="verdict-3d-box" id="verdict3dBox">
+          <div class="verdict-icon-3d" id="verdictIcon3d">
+            <i class="fa-solid fa-shield-check"></i>
+          </div>
+          <div class="verdict-info">
+            <div class="v-sub" id="verdictSub">AI CLASSIFICATION</div>
+            <div class="v-title" id="verdictTitle">NORMAL FLOW</div>
+            <div class="v-desc" id="verdictDesc">Traffic aligns with legitimate network baseline.</div>
+          </div>
+          <div class="v-score-wrap">
+            <span class="v-score-num" id="verdictScore">0%</span>
+            <span class="v-score-lbl">RISK SCORE</span>
+          </div>
+        </div>
+
+        <!-- Multi-Class Probability Bars -->
+        <div class="prob-bars-container">
+          <div class="prob-header">
+            <span>Model Probability Breakdown:</span>
+            <strong class="text-cyan" id="probConfidence">Conf: 99.8%</strong>
+          </div>
+
+          <div class="prob-bar-row">
+            <div class="prob-lbl-row">
+              <span><i class="fa-solid fa-circle-check text-emerald"></i> Normal Traffic</span>
+              <strong id="pValNormal">99.8%</strong>
+            </div>
+            <div class="bar-track"><div class="bar-fill normal" id="barNormal" style="width:99.8%"></div></div>
+          </div>
+
+          <div class="prob-bar-row">
+            <div class="prob-lbl-row">
+              <span><i class="fa-solid fa-bolt text-rose"></i> DoS Assault</span>
+              <strong id="pValDos">0.1%</strong>
+            </div>
+            <div class="bar-track"><div class="bar-fill dos" id="barDos" style="width:0.1%"></div></div>
+          </div>
+
+          <div class="prob-bar-row">
+            <div class="prob-lbl-row">
+              <span><i class="fa-solid fa-radar text-amber"></i> PortScan Recon</span>
+              <strong id="pValPortscan">0.1%</strong>
+            </div>
+            <div class="bar-track"><div class="bar-fill portscan" id="barPortscan" style="width:0.1%"></div></div>
+          </div>
+
+          <div class="prob-bar-row">
+            <div class="prob-lbl-row">
+              <span><i class="fa-solid fa-key text-purple"></i> BruteForce Auth</span>
+              <strong id="pValBruteforce">0.0%</strong>
+            </div>
+            <div class="bar-track"><div class="bar-fill bruteforce" id="barBruteforce" style="width:0.0%"></div></div>
+          </div>
+        </div>
+
+        <!-- Next-Window Risk Forecast HUD -->
+        <div class="forecast-hud-box">
+          <div class="f-head">
+            <span class="f-title"><i class="fa-solid fa-chart-line text-cyan"></i> T+1 Forecast Horizon</span>
+            <span class="f-level-badge low" id="fLevelBadge">LOW (0%)</span>
+          </div>
+          <p class="f-desc" id="fReasonText">AI observing initial flow momentum. Threat trend stable.</p>
+        </div>
+
+        <!-- 1-Click Mitigation Actions -->
+        <div class="mitigation-btn-row">
+          <button class="btn-mitigate" onclick="triggerMitigation('block_ip')">
+            <i class="fa-solid fa-ban"></i> Block IP Rule
+          </button>
+          <button class="btn-mitigate" onclick="triggerMitigation('rate_limit')">
+            <i class="fa-solid fa-gauge-high"></i> Rate-Limit
+          </button>
+          <button class="btn-mitigate" onclick="triggerMitigation('close_port')">
+            <i class="fa-solid fa-lock"></i> Isolate Port
+          </button>
+        </div>
+      </aside>
+
+      <!-- RIGHT HUD: Live Telemetry Stream & Real-Time Flow Tuner -->
+      <aside class="floating-glass-card right-card" id="rightCard">
+        <div class="glass-card-header">
+          <div class="card-title">
+            <i class="fa-solid fa-sliders text-emerald"></i> Real-Time Flow Tuner
+          </div>
+          <button class="btn-stream-toggle-3d" id="btnLiveStreamToggle" onclick="toggleStreamFeed()">
+            <i class="fa-solid fa-play" id="streamToggleIcon"></i> <span id="streamToggleText">Stream Packets</span>
+          </button>
+        </div>
+
+        <!-- Sliders that interact directly with the 3D Guardian -->
+        <div class="tuner-sliders-list">
+          <div class="slider-item">
+            <div class="slider-lbl">
+              <span>Packet Rate (pkts/sec):</span>
+              <strong class="text-cyan" id="dispPacketRate">14.5</strong>
+            </div>
+            <input type="range" id="slidePacketRate" min="1" max="1000" step="1" value="14.5" oninput="on3dSliderInput()" />
+          </div>
+
+          <div class="slider-item">
+            <div class="slider-lbl">
+              <span>Connections to Same Host:</span>
+              <strong class="text-cyan" id="dispConns">3</strong>
+            </div>
+            <input type="range" id="slideConns" min="1" max="500" step="1" value="3" oninput="on3dSliderInput()" />
+          </div>
+
+          <div class="slider-item">
+            <div class="slider-lbl">
+              <span>Unique Destination Ports:</span>
+              <strong class="text-cyan" id="dispPorts">2</strong>
+            </div>
+            <input type="range" id="slidePorts" min="1" max="50" step="1" value="2" oninput="on3dSliderInput()" />
+          </div>
+
+          <div class="slider-item">
+            <div class="slider-lbl">
+              <span>Failed Login Attempts:</span>
+              <strong class="text-cyan" id="dispFailedLogins">0</strong>
+            </div>
+            <input type="range" id="slideFailedLogins" min="0" max="25" step="1" value="0" oninput="on3dSliderInput()" />
+          </div>
+
+          <div class="slider-item">
+            <div class="slider-lbl">
+              <span>Target Destination Port:</span>
+              <strong class="text-cyan" id="dispDstPort">Port 443 (HTTPS)</strong>
+            </div>
+            <select id="selectDstPort" class="soc-select-3d" onchange="on3dSliderInput()">
+              <option value="443">Port 443 (HTTPS Secure)</option>
+              <option value="80">Port 80 (HTTP Web)</option>
+              <option value="22">Port 22 (SSH Shell)</option>
+              <option value="21">Port 21 (FTP File Transfer)</option>
+              <option value="1433">Port 1433 (Database)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Mini Live Packet Stream Feed -->
+        <div class="stream-feed-header">
+          <span><i class="fa-solid fa-wave-square text-cyan"></i> Ingress Flow Telemetry</span>
+          <span class="badge-subtle" id="streamPktCount">0 Flows Processed</span>
+        </div>
+        <div class="stream-feed-box" id="streamFeedBox">
+          <div class="stream-empty-3d">Click <strong>"Stream Packets"</strong> to observe live telemetry.</div>
+        </div>
+      </aside>
+
+    </main>
+
+    <!-- BOTTOM FLOATING ACTION COMMAND DOCK -->
+    <nav class="hud-command-dock">
+      <button class="dock-btn normal-btn" onclick="triggerScenario('normal')">
+        <div class="dock-btn-icon"><i class="fa-solid fa-shield-halved"></i></div>
+        <div class="dock-btn-info">
+          <div class="dock-btn-title">Normal Baseline</div>
+          <div class="dock-btn-sub">Standard HTTPS traffic</div>
+        </div>
+      </button>
+
+      <button class="dock-btn dos-btn" onclick="triggerScenario('dos')">
+        <div class="dock-btn-icon"><i class="fa-solid fa-bolt-lightning"></i></div>
+        <div class="dock-btn-info">
+          <div class="dock-btn-title">DoS Assault</div>
+          <div class="dock-btn-sub">Volumetric packet flood</div>
+        </div>
+      </button>
+
+      <button class="dock-btn portscan-btn" onclick="triggerScenario('portscan')">
+        <div class="dock-btn-icon"><i class="fa-solid fa-magnifying-glass-chart"></i></div>
+        <div class="dock-btn-info">
+          <div class="dock-btn-title">Port Scan Recon</div>
+          <div class="dock-btn-sub">Multi-port reconnaissance</div>
+        </div>
+      </button>
+
+      <button class="dock-btn bruteforce-btn" onclick="triggerScenario('bruteforce')">
+        <div class="dock-btn-icon"><i class="fa-solid fa-key"></i></div>
+        <div class="dock-btn-info">
+          <div class="dock-btn-title">Brute Force Auth</div>
+          <div class="dock-btn-sub">SSH login credential sweep</div>
+        </div>
+      </button>
+
+      <button class="dock-btn forecast-btn" onclick="triggerForecastEvaluation()">
+        <div class="dock-btn-icon"><i class="fa-solid fa-chart-line"></i></div>
+        <div class="dock-btn-info">
+          <div class="dock-btn-title">Forecast T+1</div>
+          <div class="dock-btn-sub">Next-window risk model</div>
+        </div>
+      </button>
+
+      <button class="dock-btn batch-btn" onclick="triggerBatchAnalysis()">
+        <div class="dock-btn-icon"><i class="fa-solid fa-database"></i></div>
+        <div class="dock-btn-info">
+          <div class="dock-btn-title">Batch 2,040 Flows</div>
+          <div class="dock-btn-sub">Evaluate test dataset</div>
+        </div>
+      </button>
+    </nav>
+
+    <!-- INVISIBLE MODAL FOR DEEP PACKET INSPECTION -->
+    <div class="modal-backdrop-3d" id="modal3d" onclick="closeModal3d(event)">
+      <div class="modal-dialog-3d" onclick="event.stopPropagation()">
+        <div class="modal-header-3d">
+          <div class="modal-title-3d"><i class="fa-solid fa-microchip text-cyan"></i> Deep Packet Telemetry Inspector</div>
+          <button class="modal-close-3d" onclick="closeModal3d()">&times;</button>
+        </div>
+        <div class="modal-body-3d" id="modalBody3d"></div>
+        <div class="modal-footer-3d">
+          <button class="btn-hud-action" onclick="copyModalTelemetryJson()">Copy Telemetry JSON</button>
+        </div>
       </div>
-      <div class="footer-right">
-        <span>Host: <code>http://localhost:8080</code></span>
-        <span>Production Cluster Node 01</span>
-      </div>
-    </footer>
+    </div>
+
   </div>
 
   <script src="/static/app.js"></script>
