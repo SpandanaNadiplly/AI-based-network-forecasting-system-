@@ -1,17 +1,19 @@
 /**
- * AEGIS // 3D CYBER GUARDIAN & AI NETWORK FORECASTER
- * Three.js WebGL Interactive 3D Hologram & Real-Time ML Engine
+ * HYPERION // Neural Threat Forecaster & AI Cyber Defense
+ * Clean WebGL Holographic Globe & Real-Time ML Threat Forecasting Engine
  */
 
 // ==========================================================================
-// 1. Three.js 3D WebGL Scene & Entity Setup
+// 1. Three.js 3D WebGL Holographic Scene (Cyber Network Globe & Radar Shield)
 // ==========================================================================
 
 let scene, camera, renderer;
-let guardianCore, guardianInnerSphere, guardianWireIcosa, guardianShieldPoints;
-let ring1, ring2, ring3;
-let particleCloud, particleGeo;
-let corePointLight;
+let guardianCore;
+let globeInnerCore, globeWireframe, globeLatLongMesh;
+let radarSweepMesh, radarRingMajor, radarRingMinor;
+let satelliteGroup, satellites = [];
+let shieldBracketsGroup;
+let corePointLight, ambientLight, dirLight;
 
 let mouseX = 0, mouseY = 0;
 let targetRotX = 0, targetRotY = 0;
@@ -19,13 +21,13 @@ let currentScale = 1.0;
 let targetScale = 1.0;
 let pulseTimer = 0;
 
-let guardianState = "NORMAL"; // NORMAL, SCANNING, THREAT, FORECAST
+let guardianState = "NORMAL"; // NORMAL, SCANNING, THREAT, SAFE, FORECAST
 let activeColor = new THREE.Color(0x00f2fe);
 let targetColor = new THREE.Color(0x00f2fe);
 
 const STATE_COLORS = {
   NORMAL: 0x00f2fe,     // Electric Cyan
-  SAFE: 0x10b981,       // Emerald
+  SAFE: 0x10b981,       // Emerald Teal
   THREAT: 0xf43f5e,     // Crimson Red
   SCANNING: 0xa855f7,   // Violet
   FORECAST: 0xf59e0b    // Amber Gold
@@ -46,21 +48,24 @@ function init3DScene() {
   renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.25;
   container.appendChild(renderer.domElement);
 
   // Lighting
-  const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+  ambientLight = new THREE.AmbientLight(0xffffff, 0.65);
   scene.add(ambientLight);
 
-  corePointLight = new THREE.PointLight(STATE_COLORS.NORMAL, 2.5, 40);
-  corePointLight.position.set(0, 0, 5);
+  corePointLight = new THREE.PointLight(STATE_COLORS.NORMAL, 3.5, 45);
+  corePointLight.position.set(0, 0, 6);
   scene.add(corePointLight);
 
-  // Build 3D Guardian Entity
-  buildGuardianEntity();
+  dirLight = new THREE.DirectionalLight(0xffffff, 0.6);
+  dirLight.position.set(8, 12, 10);
+  scene.add(dirLight);
 
-  // Build Orbiting Particle Cloud
-  buildParticleCloud();
+  // Build Holographic Cyber Network Globe Sentinel
+  buildGuardianEntity();
 
   // Mouse & Touch Listeners
   window.addEventListener("mousemove", onDocumentMouseMove);
@@ -75,107 +80,125 @@ function init3DScene() {
 function buildGuardianEntity() {
   guardianCore = new THREE.Group();
 
-  // 1. Inner Glowing Nucleus Sphere
-  const innerGeo = new THREE.SphereGeometry(2.4, 32, 32);
+  // 1. Deep Glass Core Sphere (Network Nucleus)
+  const innerGeo = new THREE.SphereGeometry(2.3, 32, 32);
   const innerMat = new THREE.MeshPhongMaterial({
     color: STATE_COLORS.NORMAL,
     emissive: STATE_COLORS.NORMAL,
-    emissiveIntensity: 0.6,
+    emissiveIntensity: 0.55,
     transparent: true,
     opacity: 0.85,
     shininess: 90
   });
-  guardianInnerSphere = new THREE.Mesh(innerGeo, innerMat);
-  guardianCore.add(guardianInnerSphere);
+  globeInnerCore = new THREE.Mesh(innerGeo, innerMat);
+  guardianCore.add(globeInnerCore);
 
-  // 2. Wireframe Geodesic Icosahedron Shell
-  const wireGeo = new THREE.IcosahedronGeometry(3.6, 1);
+  // 2. Holographic Latitude / Longitude Network Wireframe
+  const wireGeo = new THREE.SphereGeometry(3.3, 20, 16);
   const wireMat = new THREE.MeshBasicMaterial({
     color: STATE_COLORS.NORMAL,
     wireframe: true,
     transparent: true,
-    opacity: 0.75
+    opacity: 0.6
   });
-  guardianWireIcosa = new THREE.Mesh(wireGeo, wireMat);
-  guardianCore.add(guardianWireIcosa);
+  globeWireframe = new THREE.Mesh(wireGeo, wireMat);
+  guardianCore.add(globeWireframe);
 
-  // 3. Points Particle Halo
-  const haloGeo = new THREE.IcosahedronGeometry(4.8, 2);
-  const haloMat = new THREE.PointsMaterial({
-    color: STATE_COLORS.NORMAL,
-    size: 0.12,
-    transparent: true,
-    opacity: 0.8
-  });
-  guardianShieldPoints = new THREE.Points(haloGeo, haloMat);
-  guardianCore.add(guardianShieldPoints);
-
-  // 4. Concentric Orbital Rings (Torus)
-  const ringMat = new THREE.MeshBasicMaterial({
+  // 3. Geodesic Defense Forcefield Cage
+  const icosaGeo = new THREE.IcosahedronGeometry(4.2, 1);
+  const icosaMat = new THREE.MeshBasicMaterial({
     color: STATE_COLORS.NORMAL,
     wireframe: true,
     transparent: true,
+    opacity: 0.35
+  });
+  globeLatLongMesh = new THREE.Mesh(icosaGeo, icosaMat);
+  guardianCore.add(globeLatLongMesh);
+
+  // 4. 360-Degree Holographic Radar Scanner Disc
+  const radarGeo = new THREE.RingGeometry(0.2, 3.25, 32, 1, 0, Math.PI * 0.7);
+  const radarMat = new THREE.MeshBasicMaterial({
+    color: STATE_COLORS.NORMAL,
+    side: THREE.DoubleSide,
+    transparent: true,
     opacity: 0.45
   });
+  radarSweepMesh = new THREE.Mesh(radarGeo, radarMat);
+  radarSweepMesh.rotation.x = Math.PI / 2;
+  guardianCore.add(radarSweepMesh);
 
-  ring1 = new THREE.Mesh(new THREE.TorusGeometry(6.2, 0.04, 8, 80), ringMat);
-  ring2 = new THREE.Mesh(new THREE.TorusGeometry(7.4, 0.04, 8, 80), ringMat);
-  ring3 = new THREE.Mesh(new THREE.TorusGeometry(8.6, 0.04, 8, 80), ringMat);
+  // 5. Equatorial and Polar Orbital Defense Gimbal Rings
+  const ringMatMajor = new THREE.MeshBasicMaterial({
+    color: STATE_COLORS.NORMAL,
+    wireframe: true,
+    transparent: true,
+    opacity: 0.5
+  });
+  radarRingMajor = new THREE.Mesh(new THREE.TorusGeometry(5.8, 0.04, 6, 90), ringMatMajor);
+  radarRingMajor.rotation.x = Math.PI / 2.6;
+  guardianCore.add(radarRingMajor);
 
-  ring1.rotation.x = Math.PI / 3;
-  ring2.rotation.y = Math.PI / 4;
-  ring3.rotation.x = -Math.PI / 4;
+  const ringMatMinor = new THREE.MeshBasicMaterial({
+    color: STATE_COLORS.NORMAL,
+    wireframe: true,
+    transparent: true,
+    opacity: 0.4
+  });
+  radarRingMinor = new THREE.Mesh(new THREE.TorusGeometry(7.2, 0.035, 6, 90), ringMatMinor);
+  radarRingMinor.rotation.y = Math.PI / 3;
+  guardianCore.add(radarRingMinor);
 
-  guardianCore.add(ring1);
-  guardianCore.add(ring2);
-  guardianCore.add(ring3);
+  // 6. 3 Precision Orbiting Defense Satellites (Clean Solid Node Gems)
+  satelliteGroup = new THREE.Group();
+  satellites = [];
+  const satGeo = new THREE.OctahedronGeometry(0.32, 0);
+  const satMat = new THREE.MeshPhongMaterial({
+    color: STATE_COLORS.NORMAL,
+    emissive: STATE_COLORS.NORMAL,
+    emissiveIntensity: 0.9,
+    shininess: 100
+  });
+
+  for (let i = 0; i < 3; i++) {
+    const sat = new THREE.Mesh(satGeo, satMat.clone());
+    satellites.push(sat);
+    satelliteGroup.add(sat);
+  }
+  guardianCore.add(satelliteGroup);
+
+  // 7. Outer Cybernetic Reticle Brackets
+  shieldBracketsGroup = new THREE.Group();
+  const reticleRingMat = new THREE.MeshBasicMaterial({
+    color: STATE_COLORS.NORMAL,
+    wireframe: true,
+    transparent: true,
+    opacity: 0.25
+  });
+  const reticle = new THREE.Mesh(new THREE.TorusGeometry(8.6, 0.025, 4, 80), reticleRingMat);
+  shieldBracketsGroup.add(reticle);
+  guardianCore.add(shieldBracketsGroup);
 
   scene.add(guardianCore);
 }
 
-function buildParticleCloud() {
-  const count = 1200;
-  const positions = new Float32Array(count * 3);
-
-  for (let i = 0; i < count * 3; i += 3) {
-    const radius = 9 + Math.random() * 18;
-    const theta = Math.random() * Math.PI * 2;
-    const phi = Math.acos((Math.random() * 2) - 1);
-
-    positions[i] = radius * Math.sin(phi) * Math.cos(theta);
-    positions[i + 1] = radius * Math.sin(phi) * Math.sin(theta);
-    positions[i + 2] = radius * Math.cos(phi);
-  }
-
-  particleGeo = new THREE.BufferGeometry();
-  particleGeo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
-
-  const particleMat = new THREE.PointsMaterial({
-    color: STATE_COLORS.NORMAL,
-    size: 0.14,
-    transparent: true,
-    opacity: 0.65
-  });
-
-  particleCloud = new THREE.Points(particleGeo, particleMat);
-  scene.add(particleCloud);
-}
-
 function onDocumentMouseMove(event) {
-  mouseX = (event.clientX - window.innerWidth / 2) * 0.0015;
-  mouseY = (event.clientY - window.innerHeight / 2) * 0.0015;
+  mouseX = (event.clientX - window.innerWidth / 2) * 0.0012;
+  mouseY = (event.clientY - window.innerHeight / 2) * 0.0012;
 }
 
 function onDocumentTouchMove(event) {
   if (event.touches.length > 0) {
-    mouseX = (event.touches[0].clientX - window.innerWidth / 2) * 0.0015;
-    mouseY = (event.touches[0].clientY - window.innerHeight / 2) * 0.0015;
+    mouseX = (event.touches[0].clientX - window.innerWidth / 2) * 0.0012;
+    mouseY = (event.touches[0].clientY - window.innerHeight / 2) * 0.0012;
   }
 }
 
-function onCanvasClick() {
-  // Click ripple effect on 3D guardian
-  targetScale = 1.35;
+function onCanvasClick(e) {
+  if (e.target.closest('.hud-topbar, .sentinel-dialogue-banner, .floating-glass-card, .hud-command-dock, .modal-dialog-3d, .toast-container')) {
+    return;
+  }
+  targetScale = 1.25;
+  playCyberAudio("click");
   setTimeout(() => { targetScale = 1.0; }, 180);
 }
 
@@ -190,27 +213,30 @@ function onWindowResize() {
 function animate3D() {
   requestAnimationFrame(animate3D);
 
-  pulseTimer += 0.03;
+  pulseTimer += 0.025;
 
   // Smooth Color Transition
   activeColor.lerp(targetColor, 0.08);
-  if (guardianInnerSphere) {
-    guardianInnerSphere.material.color.copy(activeColor);
-    guardianInnerSphere.material.emissive.copy(activeColor);
+
+  if (globeInnerCore) {
+    globeInnerCore.material.color.copy(activeColor);
+    globeInnerCore.material.emissive.copy(activeColor);
   }
-  if (guardianWireIcosa) guardianWireIcosa.material.color.copy(activeColor);
-  if (guardianShieldPoints) guardianShieldPoints.material.color.copy(activeColor);
-  if (ring1) {
-    ring1.material.color.copy(activeColor);
-    ring2.material.color.copy(activeColor);
-    ring3.material.color.copy(activeColor);
-  }
-  if (particleCloud) particleCloud.material.color.copy(activeColor);
+  if (globeWireframe) globeWireframe.material.color.copy(activeColor);
+  if (globeLatLongMesh) globeLatLongMesh.material.color.copy(activeColor);
+  if (radarSweepMesh) radarSweepMesh.material.color.copy(activeColor);
+  if (radarRingMajor) radarRingMajor.material.color.copy(activeColor);
+  if (radarRingMinor) radarRingMinor.material.color.copy(activeColor);
   if (corePointLight) corePointLight.color.copy(activeColor);
+
+  satellites.forEach(sat => {
+    sat.material.color.copy(activeColor);
+    sat.material.emissive.copy(activeColor);
+  });
 
   // Smooth Scaling & Pulsing
   currentScale += (targetScale - currentScale) * 0.1;
-  const pulseScale = currentScale + Math.sin(pulseTimer) * 0.04;
+  const pulseScale = currentScale + Math.sin(pulseTimer) * 0.03;
   if (guardianCore) guardianCore.scale.set(pulseScale, pulseScale, pulseScale);
 
   // Smooth Mouse Parallax
@@ -218,25 +244,47 @@ function animate3D() {
   targetRotX += (mouseY - targetRotX) * 0.05;
 
   if (guardianCore) {
-    guardianCore.rotation.y = targetRotY + (guardianState === "THREAT" ? pulseTimer * 2 : pulseTimer * 0.4);
-    guardianCore.rotation.x = targetRotX + Math.sin(pulseTimer * 0.5) * 0.15;
+    const speedMult = guardianState === "THREAT" ? 2.2 : (guardianState === "SCANNING" ? 1.5 : 0.7);
 
-    // Orbit Ring Rotations
-    if (ring1) ring1.rotation.z += 0.015;
-    if (ring2) ring2.rotation.x += 0.012;
-    if (ring3) ring3.rotation.y -= 0.018;
-
-    // Shield Points Rotation
-    if (guardianShieldPoints) {
-      guardianShieldPoints.rotation.y -= 0.008;
-      guardianShieldPoints.rotation.x += 0.005;
+    // Globe Rotations
+    if (globeWireframe) globeWireframe.rotation.y += 0.008 * speedMult;
+    if (globeLatLongMesh) {
+      globeLatLongMesh.rotation.y -= 0.004 * speedMult;
+      globeLatLongMesh.rotation.x += 0.002;
     }
-  }
 
-  // Particle Swirl
-  if (particleCloud) {
-    particleCloud.rotation.y += 0.002;
-    particleCloud.rotation.x += 0.001;
+    // 360 Radar Sweep Rotation
+    if (radarSweepMesh) {
+      radarSweepMesh.rotation.z += 0.035 * speedMult;
+    }
+
+    // Gimbal Rings
+    if (radarRingMajor) radarRingMajor.rotation.z += 0.012 * speedMult;
+    if (radarRingMinor) radarRingMinor.rotation.x += 0.010 * speedMult;
+
+    // Defense Satellites Orbital Motion
+    if (satellites.length === 3) {
+      const satR = 5.8;
+      const t = pulseTimer * speedMult;
+
+      satellites[0].position.set(Math.cos(t) * satR, Math.sin(t * 0.5) * 1.5, Math.sin(t) * satR);
+      satellites[1].position.set(Math.cos(t + 2.1) * satR, Math.sin(t + 2.1) * satR * 0.4, Math.sin(t + 2.1) * satR * 0.8);
+      satellites[2].position.set(Math.sin(t * 0.8) * 1.8, Math.cos(t * 0.8 + 4.2) * satR, Math.sin(t * 0.8 + 4.2) * satR);
+
+      satellites.forEach(s => {
+        s.rotation.x += 0.03;
+        s.rotation.y += 0.04;
+      });
+    }
+
+    // Outer Reticle
+    if (shieldBracketsGroup) {
+      shieldBracketsGroup.rotation.z -= 0.003;
+    }
+
+    // Base Group Parallax
+    guardianCore.rotation.y = targetRotY + Math.sin(pulseTimer * 0.3) * 0.06;
+    guardianCore.rotation.x = targetRotX + Math.cos(pulseTimer * 0.3) * 0.05;
   }
 
   renderer.render(scene, camera);
@@ -249,7 +297,7 @@ function set3DGuardianState(stateName) {
   targetColor.setHex(hex);
 
   if (stateName === "THREAT") {
-    targetScale = 1.4;
+    targetScale = 1.35;
     setTimeout(() => { targetScale = 1.0; }, 300);
     playCyberAudio("threat");
   } else if (stateName === "SCANNING") {
@@ -277,7 +325,6 @@ function getSmoothVoice() {
   const voices = window.speechSynthesis.getVoices();
   if (!voices || voices.length === 0) return null;
 
-  // Smooth, pleasant voice candidates (prioritizing Samantha, Victoria, Google UK/US, Karen, Serena)
   const smoothOrder = [
     "Samantha", "Victoria", "Google UK English Female", "Karen",
     "Serena", "Google US English", "Fiona", "Moira", "Zoe",
@@ -361,8 +408,6 @@ function playCyberAudio(type = "click") {
 /**
  * Speaks ONLY concise threat messages using one locked, smooth, natural voice.
  * Stays completely silent for normal flows and routine completions.
- *
- * @param {string} shortAlertText e.g. "PortScan alert detected", "Multiple attacks detected"
  */
 function speakSmoothThreatAlert(shortAlertText) {
   if (!speechEnabled || !window.speechSynthesis) return;
@@ -374,8 +419,8 @@ function speakSmoothThreatAlert(shortAlertText) {
   const voice = getSmoothVoice();
   if (voice) utterance.voice = voice;
 
-  utterance.rate = 0.96;   // Smooth, calm, natural cadence
-  utterance.pitch = 1.0;   // Smooth, clear, natural pitch
+  utterance.rate = 0.96;
+  utterance.pitch = 1.0;
   utterance.volume = 1.0;
 
   window.speechSynthesis.speak(utterance);
@@ -432,6 +477,9 @@ const DOCK_PRESETS = {
   }
 };
 
+let lastActiveFlow = null;
+let lastActiveResult = null;
+
 async function triggerScenario(type) {
   const flow = DOCK_PRESETS[type] || DOCK_PRESETS.normal;
   set3DGuardianState("SCANNING");
@@ -452,6 +500,9 @@ async function triggerScenario(type) {
 }
 
 function renderForensicResult(flow, result) {
+  lastActiveFlow = flow;
+  lastActiveResult = result;
+
   const isThreat = result.is_attack;
   const label = result.predicted_label;
   const score = result.risk_score || 0;
@@ -467,7 +518,7 @@ function renderForensicResult(flow, result) {
     capsuleState.innerText = `DEFCON 1 • ${label.toUpperCase()} THREAT INTERCEPTED`;
     beaconDot.className = "pulse-beacon red";
   } else {
-    capsuleState.innerText = "SENTINEL ONLINE • ALL SECTORS SECURE";
+    capsuleState.innerText = "HYPERION ONLINE • ALL SECTORS SECURE";
     beaconDot.className = "pulse-beacon green";
   }
 
@@ -528,7 +579,6 @@ function renderForensicResult(flow, result) {
 
   // Update Floating Banner & Voice
   if (isThreat) {
-    // Check if more than one attack vector is detected (multi-threat or hybrid attack)
     const attackClasses = ["DoS", "PortScan", "BruteForce"];
     const activeAttacks = attackClasses.filter(cls => (probs[cls] || 0) >= 0.20);
     const isMultiAttack = activeAttacks.length > 1;
@@ -539,7 +589,6 @@ function renderForensicResult(flow, result) {
 
     updateBannerText("THREAT ALERT", dialogue);
 
-    // Speak concisely: "Multiple attacks detected." if > 1 attack, else "${label} alert detected."
     if (isMultiAttack) {
       speakSmoothThreatAlert("Multiple attacks detected.");
     } else {
@@ -548,7 +597,6 @@ function renderForensicResult(flow, result) {
   } else {
     const dialogue = `Analysis complete. Ingress parameters match authentic baseline flow behavior with ${(result.confidence * 100).toFixed(1)}% confidence. All systems green.`;
     updateBannerText("SECTORS CLEAN", dialogue);
-    // Silent - do NOT speak on normal analysis!
   }
 
   // Add to right stream feed
@@ -585,7 +633,6 @@ async function triggerForecastEvaluation() {
     updateBannerText("FORECAST READY", dialogue);
     showToast(`Forecast: ${level} Risk (${score}%)`, "info");
 
-    // Speak ONLY if the forecasted threat level is HIGH or CRITICAL
     if (level === "HIGH" || level === "CRITICAL") {
       speakSmoothThreatAlert("High threat risk forecasted.");
     }
@@ -619,8 +666,6 @@ async function triggerBatchAnalysis() {
     updateBannerText("BATCH REPORT", dialogue);
     showToast(`Batch completed: ${threatCount} threats isolated`, "success");
 
-    // Speak ONLY if threats were found in the batch:
-    // If more than 1 attack is detected, say "Multiple attacks detected."
     if (threatCount > 1) {
       speakSmoothThreatAlert("Multiple attacks detected.");
     } else if (threatCount === 1) {
@@ -741,29 +786,66 @@ function addStreamFeedItem(flow, result) {
 
   const row = document.createElement("div");
   row.className = `stream-row-3d ${isSafe ? 'safe' : 'threat'}`;
+  row.title = "Click to inspect full packet JSON";
+  row.onclick = () => openModal3d(flow, result);
   row.innerHTML = `
     <span>${time} • <strong>P:${flow.dst_port || 80}</strong></span>
     <span>${isSafe ? '🟢 Normal' : `🚨 <strong>${result.predicted_label}</strong>`}</span>
-    <span style="color:${isSafe ? 'var(--emerald)' : 'var(--rose)'};">${result.risk_score.toFixed(0)}%</span>
+    <span style="color:${isSafe ? 'var(--emerald)' : 'var(--rose)'}; font-weight:700;">${result.risk_score.toFixed(0)}%</span>
   `;
 
   box.insertBefore(row, box.firstChild);
   if (box.children.length > 20) box.removeChild(box.lastChild);
 }
 
+// Deep Packet Inspector Modal
+let currentModalJson = "";
+
+function openModal3d(flow, result) {
+  const modal = document.getElementById("modal3d");
+  const body = document.getElementById("modalBody3d");
+  const data = {
+    timestamp: new Date().toISOString(),
+    network_flow: flow || lastActiveFlow,
+    forensic_inference: result || lastActiveResult
+  };
+  currentModalJson = JSON.stringify(data, null, 2);
+  body.innerText = currentModalJson;
+  modal.classList.add("open");
+}
+
+function closeModal3d(e) {
+  if (e && e.target && e.target !== document.getElementById("modal3d") && !e.target.classList.contains("modal-close-3d")) {
+    return;
+  }
+  const modal = document.getElementById("modal3d");
+  if (modal) modal.classList.remove("open");
+}
+
+function copyModalTelemetryJson() {
+  if (!currentModalJson) return;
+  navigator.clipboard.writeText(currentModalJson).then(() => {
+    showToast("Telemetry JSON copied to clipboard", "success");
+  }).catch(() => {
+    showToast("Failed to copy JSON", "danger");
+  });
+}
+
 // Export Incident Log
 function exportIncidentLog() {
   const data = {
-    guardian: "AEGIS // 3D Cyber Sentinel",
+    guardian: "HYPERION // Neural Threat Forecaster",
     timestamp: new Date().toISOString(),
     status: guardianState,
-    telemetry_flows_evaluated: streamCounter
+    telemetry_flows_evaluated: streamCounter,
+    last_flow: lastActiveFlow,
+    last_inference: lastActiveResult
   };
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `Aegis_3D_Threat_Log_${Date.now()}.json`;
+  a.download = `Hyperion_Threat_Log_${Date.now()}.json`;
   a.click();
   URL.revokeObjectURL(url);
   showToast("Threat log downloaded", "success");
@@ -781,7 +863,8 @@ function showToast(msg, type = "info") {
 
   setTimeout(() => {
     toast.style.opacity = "0";
-    toast.style.transition = "all 0.3s";
+    toast.style.transform = "translateX(110%)";
+    toast.style.transition = "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)";
     setTimeout(() => toast.remove(), 300);
   }, 2800);
 }
@@ -791,5 +874,5 @@ function showToast(msg, type = "info") {
 // ==========================================================================
 document.addEventListener("DOMContentLoaded", () => {
   init3DScene();
-  triggerScenario("normal"); // Initial baseline test (Completely silent)
+  triggerScenario("normal"); // Initial baseline test
 });

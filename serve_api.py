@@ -98,7 +98,7 @@ class NetworkForecastingRequestHandler(BaseHTTPRequestHandler):
         if self.path == "/health":
             self._send_json(200, {
                 "status": "healthy",
-                "service": "AegisNet AI Network Threat Forecasting Platform",
+                "service": "Hyperion // Neural Threat Forecaster",
                 "model_loaded": GLOBAL_PREDICTOR is not None,
                 "version": "2.1.0-production"
             })
@@ -206,7 +206,7 @@ def run_server(port: int = 8080, model_path: str = "models/production_network_fo
     server_address = ("", port)
     httpd = HTTPServer(server_address, NetworkForecastingRequestHandler)
     print("=" * 70)
-    print(f"[*] AEGISNET DASHBOARD & API ACTIVE AT: http://localhost:{port}")
+    print(f"[*] HYPERION DASHBOARD & API ACTIVE AT: http://localhost:{port}")
     print(f"    Open in browser : http://localhost:{port}")
     print(f"    API Health      : http://localhost:{port}/health")
     print(f"    Model Info      : http://localhost:{port}/metadata")

@@ -92,6 +92,10 @@ def run_sample_predictions(predictor: NetworkForecastingPredictor):
         print(f"  • Prediction     : {res['predicted_label']} (Confidence: {res['confidence'] * 100:.1f}%)")
         print(f"  • Attack Prob    : {res['attack_probability'] * 100:.1f}%")
         print(f"  • Risk Score     : {res['risk_score']}/100 [{res['risk_level']}]")
+        forecast = res.get("forecast", {})
+        if forecast:
+            print(f"  • T+1 Forecast   : {forecast.get('forecast_risk_level')} ({forecast.get('forecast_risk_score', 0):.1f}/100) [Confidence: {forecast.get('forecast_confidence', 0)*100:.0f}%]")
+            print(f"  • Forecast Note  : {forecast.get('forecast_reason')}")
         print(f"  • Alert Trigger  : {'YES' if res['alert_triggered'] else 'NO'}")
         print(f"  • Recommendation : {res['recommendation']}")
 
